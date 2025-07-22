@@ -5,10 +5,10 @@ import Section from "./components/Section";
 export default function App() {
   return (
     <Page>
-      <Section>
+      <Section title="찜 목록">
         <RestaurantGrid />
       </Section>
-      <Section>
+      <Section title="맛집 목록">
         <RestaurantGrid />
       </Section>
     </Page>

@@ -1,3 +1,7 @@
-export default function Page() {
-  return <p>전체 페이지 스타일</p>;
+type PageProps = {
+  children: React.ReactNode;
+};
+
+export default function Page({ children }: PageProps) {
+  return <div>{children}</div>;
 }
