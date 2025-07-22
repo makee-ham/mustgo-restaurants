@@ -4,6 +4,7 @@ import RestaurantGrid from "./components/RestaurantGrid";
 import Section from "./components/Section";
 import { fetchPlaces } from "./api/fetchPlaces";
 import type { Place } from "./types/Place";
+import { sortPlacesByDistance } from "./api/loc";
 
 export default function App() {
   const [places, setPlaces] = useState<Place[]>([]);
@@ -12,15 +13,32 @@ export default function App() {
 
   useEffect(() => {
     fetchPlaces()
-      .then((data) => setPlaces(data.places))
+      .then((data) => {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
+            const sorted = sortPlacesByDistance(
+              data.places,
+              latitude,
+              longitude
+            );
+            setPlaces(sorted);
+            setIsLoading(false);
+          },
+          () => {
+            setError("위치를 불러오지 못했습니다.");
+            setIsLoading(false);
+          }
+        );
+      })
       .catch((err) => {
         if (err.message === "404") {
           setError("요청하신 데이터를 찾을 수 없습니다. (404)");
         } else {
           setError("데이터를 불러오는 중 오류가 발생했습니다.");
         }
-      })
-      .finally(() => setIsLoading(false));
+        setIsLoading(false);
+      });
   }, []);
 
   return (
