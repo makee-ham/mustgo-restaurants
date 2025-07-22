@@ -3,7 +3,7 @@ import Page from "./components/Page";
 import RestaurantGrid from "./components/RestaurantGrid";
 import Section from "./components/Section";
 import { fetchPlaces } from "./api/fetchPlaces";
-import type { Place } from "./types/place";
+import type { Place } from "./types/Place";
 
 export default function App() {
   const [places, setPlaces] = useState<Place[]>([]);
