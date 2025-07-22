@@ -13,7 +13,13 @@ export default function App() {
   useEffect(() => {
     fetchPlaces()
       .then((data) => setPlaces(data.places))
-      .catch(console.error)
+      .catch((err) => {
+        if (err.message === "404") {
+          setError("요청하신 데이터를 찾을 수 없습니다. (404)");
+        } else {
+          setError("데이터를 불러오는 중 오류가 발생했습니다.");
+        }
+      })
       .finally(() => setIsLoading(false));
   }, []);
 
