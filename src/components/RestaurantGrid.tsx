@@ -1,17 +1,28 @@
+import type { Place } from "../types/place";
 import RestaurantCard from "./RestaurantCard";
 
-export default function RestaurantGrid() {
+type RestaurantGridProps = {
+  places: Place[];
+  loading: boolean;
+};
+
+export default function RestaurantGrid({
+  places,
+  loading,
+}: RestaurantGridProps) {
+  if (loading) {
+    return <p className="text-center">로딩 중...</p>;
+  }
+
+  if (places.length === 0) {
+    return <p className="text-center">데이터가 없습니다.</p>;
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <RestaurantCard />
-      <RestaurantCard />
-      <RestaurantCard />
-      <RestaurantCard />
-      <RestaurantCard />
-      <RestaurantCard />
-      <RestaurantCard />
-      <RestaurantCard />
-      <RestaurantCard />
+      {places.map((place) => (
+        <RestaurantCard key={place.id} place={place} />
+      ))}
     </div>
   );
 }
