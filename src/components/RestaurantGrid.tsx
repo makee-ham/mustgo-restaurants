@@ -1,3 +1,17 @@
+import RestaurantCard from "./RestaurantCard";
+
 export default function RestaurantGrid() {
-  return <p>맛집 카드 리스트를 그리드 레이아웃으로 렌더링</p>;
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <RestaurantCard />
+      <RestaurantCard />
+      <RestaurantCard />
+      <RestaurantCard />
+      <RestaurantCard />
+      <RestaurantCard />
+      <RestaurantCard />
+      <RestaurantCard />
+      <RestaurantCard />
+    </div>
+  );
 }
