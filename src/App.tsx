@@ -8,6 +8,7 @@ import type { Place } from "./types/Place";
 export default function App() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPlaces()
