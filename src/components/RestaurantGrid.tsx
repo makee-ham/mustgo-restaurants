@@ -11,7 +11,7 @@ export default function RestaurantGrid({
   loading,
 }: RestaurantGridProps) {
   if (loading) {
-    return <p className="text-center">로딩 중...</p>;
+    return <p className="text-center">맛집을 불러오는 중입니다...</p>;
   }
 
   if (places.length === 0) {
