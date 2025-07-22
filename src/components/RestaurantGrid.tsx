@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
-import RestaurantCard from "./RestaurantCard";
-import { fetchPlaces } from "../api/fetchPlaces";
 import type { Place } from "../types/place";
+import RestaurantCard from "./RestaurantCard";
 
-export default function RestaurantGrid() {
-  const [places, setPlaces] = useState<Place[]>([]);
-  const [loading, setLoading] = useState(true);
+type RestaurantGridProps = {
+  places: Place[];
+  loading: boolean;
+};
 
-  useEffect(() => {
-    fetchPlaces()
-      .then((data) => setPlaces(data.places))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
+export default function RestaurantGrid({
+  places,
+  loading,
+}: RestaurantGridProps) {
   if (loading) {
     return <p className="text-center">로딩 중...</p>;
+  }
+
+  if (places.length === 0) {
+    return <p className="text-center">데이터가 없습니다.</p>;
   }
 
   return (
