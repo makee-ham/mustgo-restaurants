@@ -3,5 +3,9 @@ type PageProps = {
 };
 
 export default function Page({ children }: PageProps) {
-  return <div>{children}</div>;
+  return (
+    <main className="min-h-screen bg-base-200 text-base-content p-4">
+      <div className="max-w-6xl mx-auto space-y-8">{children}</div>
+    </main>
+  );
 }
