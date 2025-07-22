@@ -4,7 +4,7 @@ import RestaurantGrid from "./components/RestaurantGrid";
 import Section from "./components/Section";
 import { fetchPlaces } from "./api/fetchPlaces";
 import type { Place } from "./types/Place";
-import { sortPlacesByDistance } from "./api/loc.js";
+import { sortPlacesByDistance } from "./api/loc";
 
 export default function App() {
   const [places, setPlaces] = useState<Place[]>([]);
