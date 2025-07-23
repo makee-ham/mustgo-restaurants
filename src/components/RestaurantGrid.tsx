@@ -4,13 +4,15 @@ import RestaurantCard from "./RestaurantCard";
 type RestaurantGridProps = {
   places: Place[];
   loading: boolean;
-  onLike: (place: Place) => void;
+  onLike: (place: Place, liked: boolean) => void;
+  likedPlaces: Place[];
 };
 
 export default function RestaurantGrid({
   places,
   loading,
   onLike,
+  likedPlaces,
 }: RestaurantGridProps) {
   if (loading) {
     return <p className="text-center">맛집을 불러오는 중입니다...</p>;
@@ -22,13 +24,18 @@ export default function RestaurantGrid({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {places.map((place) => (
-        <RestaurantCard
-          key={place.id}
-          place={place}
-          onLike={() => onLike(place)}
-        />
-      ))}
+      {places.map((place) => {
+        const liked = likedPlaces.some((p) => p.id === place.id);
+
+        return (
+          <RestaurantCard
+            key={place.id}
+            place={place}
+            liked={liked}
+            onLike={() => onLike(place, liked)}
+          />
+        );
+      })}
     </div>
   );
 }

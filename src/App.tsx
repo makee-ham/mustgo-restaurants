@@ -5,7 +5,11 @@ import Section from "./components/Section";
 import { fetchPlaces } from "./api/fetchPlaces";
 import type { Place } from "./types/Place";
 import { sortPlacesByDistance } from "./api/loc";
-import { fetchLikedPlaces, saveLikedPlace } from "./api/bookmark";
+import {
+  deleteLikedPlace,
+  fetchLikedPlaces,
+  saveLikedPlace,
+} from "./api/bookmark";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function App() {
@@ -13,20 +17,35 @@ export default function App() {
   const [likedPlaces, setLikedPlaces] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [placeToDelete, setPlaceToDelete] = useState<Place | null>(null);
 
-  const handleLike = async (place: Place) => {
-    const alreadyLiked = likedPlaces.some((p) => p.id === place.id);
-
-    if (alreadyLiked) {
-      toast("이미 찜한 맛집이에요!");
-      return;
-    }
+  const confirmDelete = async () => {
+    if (!placeToDelete) return;
 
     try {
-      await saveLikedPlace(place);
-      setLikedPlaces((prev) => [...prev, place]);
+      await deleteLikedPlace(placeToDelete.id);
+      setLikedPlaces((prev) => prev.filter((p) => p.id !== placeToDelete.id));
     } catch {
-      toast.error("찜하기에 실패했습니다.");
+      toast.error("삭제에 실패했습니다.");
+    } finally {
+      setIsModalOpen(false);
+      setPlaceToDelete(null);
+    }
+  };
+
+  const handleLike = (place: Place, liked: boolean) => {
+    if (liked) {
+      setPlaceToDelete(place);
+      setIsModalOpen(true);
+    } else {
+      saveLikedPlace(place)
+        .then(() => {
+          setLikedPlaces((prev) => [...prev, place]);
+        })
+        .catch(() => {
+          toast.error("찜하기에 실패했습니다.");
+        });
     }
   };
 
@@ -108,6 +127,7 @@ export default function App() {
                 places={likedPlaces}
                 loading={isLoading}
                 onLike={handleLike}
+                likedPlaces={likedPlaces}
               />
             </Section>
 
@@ -116,9 +136,37 @@ export default function App() {
                 places={places}
                 loading={isLoading}
                 onLike={handleLike}
+                likedPlaces={likedPlaces}
               />
             </Section>
           </>
+        )}
+        {isModalOpen && (
+          <div className="modal modal-open">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">정말 삭제하시겠습니까?</h3>
+              <p className="py-4">{placeToDelete?.title}</p>
+              <div className="modal-action">
+                <button
+                  type="button"
+                  className="btn btn-error"
+                  onClick={confirmDelete}
+                >
+                  삭제
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setPlaceToDelete(null);
+                  }}
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </Page>
     </>
