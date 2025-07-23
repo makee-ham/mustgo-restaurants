@@ -4,7 +4,7 @@ import RestaurantCard from "./RestaurantCard";
 type RestaurantGridProps = {
   places: Place[];
   loading: boolean;
-  onLike: (place: Place) => void;
+  onLike: (place: Place, liked: boolean) => void;
   likedPlaces: Place[];
 };
 
@@ -32,7 +32,7 @@ export default function RestaurantGrid({
             key={place.id}
             place={place}
             liked={liked}
-            onLike={() => onLike(place)}
+            onLike={() => onLike(place, liked)}
           />
         );
       })}
