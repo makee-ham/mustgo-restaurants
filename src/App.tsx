@@ -5,11 +5,22 @@ import Section from "./components/Section";
 import { fetchPlaces } from "./api/fetchPlaces";
 import type { Place } from "./types/Place";
 import { sortPlacesByDistance } from "./api/loc";
+import { saveLikedPlace } from "./api/bookmark";
 
 export default function App() {
   const [places, setPlaces] = useState<Place[]>([]);
+  const [likedPlaces, setLikedPlaces] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleLike = async (place: Place) => {
+    try {
+      await saveLikedPlace(place);
+      setLikedPlaces((prev) => [...prev, place]);
+    } catch {
+      setError("찜하기에 실패했습니다.");
+    }
+  };
 
   useEffect(() => {
     fetchPlaces()
@@ -63,11 +74,19 @@ export default function App() {
       ) : (
         <>
           <Section title="찜 목록">
-            <RestaurantGrid places={places} loading={isLoading} />
+            <RestaurantGrid
+              places={likedPlaces}
+              loading={isLoading}
+              onLike={handleLike}
+            />
           </Section>
 
           <Section title="맛집 목록">
-            <RestaurantGrid places={places} loading={isLoading} />
+            <RestaurantGrid
+              places={places}
+              loading={isLoading}
+              onLike={handleLike}
+            />
           </Section>
         </>
       )}
