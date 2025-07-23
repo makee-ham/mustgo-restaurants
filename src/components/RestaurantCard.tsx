@@ -2,9 +2,10 @@ import type { Place } from "../types/Place";
 
 type RestaurantCardProps = {
   place: Place;
+  onLike: () => void;
 };
 
-export default function RestaurantCard({ place }: RestaurantCardProps) {
+export default function RestaurantCard({ place, onLike }: RestaurantCardProps) {
   const imageUrl = `${import.meta.env.VITE_API_BASE_URL}${place.image.src}`;
 
   return (
@@ -21,6 +22,7 @@ export default function RestaurantCard({ place }: RestaurantCardProps) {
 
       {/* 찜하기 토글 버튼은 추후 찜 기능 때 디자인 할 것 */}
       <button
+        onClick={onLike}
         className="absolute top-2 right-2 btn btn-sm btn-circle bg-base-100/80 text-base-content hover:bg-base-200"
         aria-label="찜하기"
       >

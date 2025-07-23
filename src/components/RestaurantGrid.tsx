@@ -4,11 +4,13 @@ import RestaurantCard from "./RestaurantCard";
 type RestaurantGridProps = {
   places: Place[];
   loading: boolean;
+  onLike: (place: Place) => void;
 };
 
 export default function RestaurantGrid({
   places,
   loading,
+  onLike,
 }: RestaurantGridProps) {
   if (loading) {
     return <p className="text-center">맛집을 불러오는 중입니다...</p>;
@@ -21,7 +23,11 @@ export default function RestaurantGrid({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {places.map((place) => (
-        <RestaurantCard key={place.id} place={place} />
+        <RestaurantCard
+          key={place.id}
+          place={place}
+          onLike={() => onLike(place)}
+        />
       ))}
     </div>
   );

@@ -5,11 +5,30 @@ import Section from "./components/Section";
 import { fetchPlaces } from "./api/fetchPlaces";
 import type { Place } from "./types/Place";
 import { sortPlacesByDistance } from "./api/loc";
+import { saveLikedPlace } from "./api/bookmark";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function App() {
   const [places, setPlaces] = useState<Place[]>([]);
+  const [likedPlaces, setLikedPlaces] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleLike = async (place: Place) => {
+    const alreadyLiked = likedPlaces.some((p) => p.id === place.id);
+
+    if (alreadyLiked) {
+      toast("이미 찜한 맛집이에요!");
+      return;
+    }
+
+    try {
+      await saveLikedPlace(place);
+      setLikedPlaces((prev) => [...prev, place]);
+    } catch {
+      toast.error("찜하기에 실패했습니다.");
+    }
+  };
 
   useEffect(() => {
     fetchPlaces()
@@ -42,35 +61,60 @@ export default function App() {
   }, []);
 
   return (
-    <Page>
-      {error ? (
-        <div className="alert alert-error shadow-lg mb-6">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M18.364 5.636l-12.728 12.728m0-12.728l12.728 12.728"
-            />
-          </svg>
-          <span>{error}</span>
-        </div>
-      ) : (
-        <>
-          <Section title="찜 목록">
-            <RestaurantGrid places={places} loading={isLoading} />
-          </Section>
+    <>
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "var(--color-base-100)",
+            color: "var(--color-base-content)",
+            border: "1px solid var(--color-base-300)",
+          },
+          error: {
+            style: {
+              background: "var(--color-error)",
+              color: "var(--color-error-content)",
+            },
+          },
+        }}
+      />
+      <Page>
+        {error ? (
+          <div className="alert alert-error shadow-lg mb-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="stroke-current shrink-0 h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M18.364 5.636l-12.728 12.728m0-12.728l12.728 12.728"
+              />
+            </svg>
+            <span>{error}</span>
+          </div>
+        ) : (
+          <>
+            <Section title="찜 목록">
+              <RestaurantGrid
+                places={likedPlaces}
+                loading={isLoading}
+                onLike={handleLike}
+              />
+            </Section>
 
-          <Section title="맛집 목록">
-            <RestaurantGrid places={places} loading={isLoading} />
-          </Section>
-        </>
-      )}
-    </Page>
+            <Section title="맛집 목록">
+              <RestaurantGrid
+                places={places}
+                loading={isLoading}
+                onLike={handleLike}
+              />
+            </Section>
+          </>
+        )}
+      </Page>
+    </>
   );
 }
