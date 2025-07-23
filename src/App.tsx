@@ -108,6 +108,7 @@ export default function App() {
                 places={likedPlaces}
                 loading={isLoading}
                 onLike={handleLike}
+                likedPlaces={likedPlaces}
               />
             </Section>
 
@@ -116,6 +117,7 @@ export default function App() {
                 places={places}
                 loading={isLoading}
                 onLike={handleLike}
+                likedPlaces={likedPlaces}
               />
             </Section>
           </>
