@@ -14,6 +14,8 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   const handleLike = async (place: Place) => {
+    const alreadyLiked = likedPlaces.some((p) => p.id === place.id);
+
     try {
       await saveLikedPlace(place);
       setLikedPlaces((prev) => [...prev, place]);
