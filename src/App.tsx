@@ -5,7 +5,7 @@ import Section from "./components/Section";
 import { fetchPlaces } from "./api/fetchPlaces";
 import type { Place } from "./types/Place";
 import { sortPlacesByDistance } from "./api/loc";
-import { saveLikedPlace } from "./api/bookmark";
+import { fetchLikedPlaces, saveLikedPlace } from "./api/bookmark";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function App() {
@@ -57,6 +57,12 @@ export default function App() {
           setError("데이터를 불러오는 중 오류가 발생했습니다.");
         }
         setIsLoading(false);
+      });
+
+    fetchLikedPlaces()
+      .then(setLikedPlaces)
+      .catch(() => {
+        setError("데이터를 불러오는 중 오류가 발생했습니다.");
       });
   }, []);
 

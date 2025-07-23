@@ -16,7 +16,7 @@ export async function saveLikedPlace(place: Place) {
   return await response.json();
 }
 
-export async function fetchLikePlaces(): Promise<Place[]> {
+export async function fetchLikedPlaces(): Promise<Place[]> {
   const response = await fetch(baseUrl + "users/places");
 
   if (!response.ok) {
