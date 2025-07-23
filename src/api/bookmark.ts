@@ -15,3 +15,14 @@ export async function saveLikedPlace(place: Place) {
 
   return await response.json();
 }
+
+export async function fetchLikePlaces(): Promise<Place[]> {
+  const response = await fetch(baseUrl + "users/places");
+
+  if (!response.ok) {
+    throw new Error("찜 목록을 불러오지 못했습니다.");
+  }
+
+  const data = await response.json();
+  return data.places;
+}
