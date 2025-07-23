@@ -6,7 +6,7 @@ export async function saveLikedPlace(place: Place) {
   const response = await fetch(baseUrl + "users/places", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(place),
+    body: JSON.stringify({ place }),
   });
 
   if (!response.ok) {
