@@ -13,6 +13,8 @@ export default function App() {
   const [likedPlaces, setLikedPlaces] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [placeToDelete, setPlaceToDelete] = useState<Place | null>(null);
 
   const handleLike = async (place: Place) => {
     const alreadyLiked = likedPlaces.some((p) => p.id === place.id);
@@ -28,6 +30,11 @@ export default function App() {
     } catch {
       toast.error("찜하기에 실패했습니다.");
     }
+  };
+
+  const handleDeleteClick = (place: Place) => {
+    setPlaceToDelete(place);
+    setIsModalOpen(true);
   };
 
   useEffect(() => {

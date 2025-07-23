@@ -26,3 +26,13 @@ export async function fetchLikedPlaces(): Promise<Place[]> {
   const data = await response.json();
   return data.places;
 }
+
+export async function deleteLikedPlace(id: string) {
+  const response = await fetch(`${baseUrl}users/places/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("삭제에 실패했습니다.");
+  }
+}
