@@ -1,7 +1,174 @@
+import { useEffect, useState } from "react";
+import Page from "./components/Page";
+import RestaurantGrid from "./components/RestaurantGrid";
+import Section from "./components/Section";
+import { fetchPlaces } from "./api/fetchPlaces";
+import type { Place } from "./types/Place";
+import { sortPlacesByDistance } from "./api/loc";
+import {
+  deleteLikedPlace,
+  fetchLikedPlaces,
+  saveLikedPlace,
+} from "./api/bookmark";
+import toast, { Toaster } from "react-hot-toast";
+
 export default function App() {
+  const [places, setPlaces] = useState<Place[]>([]);
+  const [likedPlaces, setLikedPlaces] = useState<Place[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [placeToDelete, setPlaceToDelete] = useState<Place | null>(null);
+
+  const confirmDelete = async () => {
+    if (!placeToDelete) return;
+
+    try {
+      await deleteLikedPlace(placeToDelete.id);
+      setLikedPlaces((prev) => prev.filter((p) => p.id !== placeToDelete.id));
+    } catch {
+      toast.error("삭제에 실패했습니다.");
+    } finally {
+      setIsModalOpen(false);
+      setPlaceToDelete(null);
+    }
+  };
+
+  const handleLike = (place: Place, liked: boolean) => {
+    if (liked) {
+      setPlaceToDelete(place);
+      setIsModalOpen(true);
+    } else {
+      saveLikedPlace(place)
+        .then(() => {
+          setLikedPlaces((prev) => [...prev, place]);
+        })
+        .catch(() => {
+          toast.error("찜하기에 실패했습니다.");
+        });
+    }
+  };
+
+  useEffect(() => {
+    fetchPlaces()
+      .then((data) => {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
+            const sorted = sortPlacesByDistance(
+              data.places,
+              latitude,
+              longitude
+            );
+            setPlaces(sorted);
+            setIsLoading(false);
+          },
+          () => {
+            setError("위치를 불러오지 못했습니다.");
+            setIsLoading(false);
+          }
+        );
+      })
+      .catch((err) => {
+        if (err.message === "404") {
+          setError("요청하신 데이터를 찾을 수 없습니다. (404)");
+        } else {
+          setError("데이터를 불러오는 중 오류가 발생했습니다.");
+        }
+        setIsLoading(false);
+      });
+
+    fetchLikedPlaces()
+      .then(setLikedPlaces)
+      .catch(() => {
+        setError("데이터를 불러오는 중 오류가 발생했습니다.");
+      });
+  }, []);
+
   return (
     <>
-      <div></div>
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "var(--color-base-100)",
+            color: "var(--color-base-content)",
+            border: "1px solid var(--color-base-300)",
+          },
+          error: {
+            style: {
+              background: "var(--color-error)",
+              color: "var(--color-error-content)",
+            },
+          },
+        }}
+      />
+      <Page>
+        {error ? (
+          <div className="alert alert-error shadow-lg mb-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="stroke-current shrink-0 h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M18.364 5.636l-12.728 12.728m0-12.728l12.728 12.728"
+              />
+            </svg>
+            <span>{error}</span>
+          </div>
+        ) : (
+          <>
+            <Section title="찜 목록">
+              <RestaurantGrid
+                places={likedPlaces}
+                loading={isLoading}
+                onLike={handleLike}
+                likedPlaces={likedPlaces}
+              />
+            </Section>
+
+            <Section title="맛집 목록">
+              <RestaurantGrid
+                places={places}
+                loading={isLoading}
+                onLike={handleLike}
+                likedPlaces={likedPlaces}
+              />
+            </Section>
+          </>
+        )}
+        {isModalOpen && (
+          <div className="modal modal-open">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">정말 삭제하시겠습니까?</h3>
+              <p className="py-4">{placeToDelete?.title}</p>
+              <div className="modal-action">
+                <button
+                  type="button"
+                  className="btn btn-error"
+                  onClick={confirmDelete}
+                >
+                  삭제
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setPlaceToDelete(null);
+                  }}
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </Page>
     </>
   );
 }
