@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import DeleteModal from "./components/DeleteModal";
 import usePlaces from "./hooks/usePlaces";
 import ErrorAlert from "./components/ErrorAlert";
+import ToastProvider from "./components/ToastProvider";
 
 export default function App() {
   const {
@@ -21,21 +22,7 @@ export default function App() {
 
   return (
     <>
-      <Toaster
-        toastOptions={{
-          style: {
-            background: "var(--color-base-100)",
-            color: "var(--color-base-content)",
-            border: "1px solid var(--color-base-300)",
-          },
-          error: {
-            style: {
-              background: "var(--color-error)",
-              color: "var(--color-error-content)",
-            },
-          },
-        }}
-      />
+      <ToastProvider />
       <Page>
         {error ? (
           <ErrorAlert message={error} />
