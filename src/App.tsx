@@ -1,10 +1,9 @@
 import Page from "./components/Page";
-import RestaurantGrid from "./components/RestaurantGrid";
-import Section from "./components/Section";
 import DeleteModal from "./components/DeleteModal";
 import usePlaces from "./hooks/usePlaces";
 import ErrorAlert from "./components/ErrorAlert";
 import ToastProvider from "./components/ToastProvider";
+import RestaurantSections from "./components/RestaurantSections";
 
 export default function App() {
   const {
@@ -26,25 +25,12 @@ export default function App() {
         {error ? (
           <ErrorAlert message={error} />
         ) : (
-          <>
-            <Section title="찜 목록">
-              <RestaurantGrid
-                places={likedPlaces}
-                loading={isLoading}
-                onLike={handleLike}
-                likedPlaces={likedPlaces}
-              />
-            </Section>
-
-            <Section title="맛집 목록">
-              <RestaurantGrid
-                places={places}
-                loading={isLoading}
-                onLike={handleLike}
-                likedPlaces={likedPlaces}
-              />
-            </Section>
-          </>
+          <RestaurantSections
+            places={places}
+            likedPlaces={likedPlaces}
+            isLoading={isLoading}
+            onLike={handleLike}
+          />
         )}
         <DeleteModal
           isOpen={isModalOpen}
