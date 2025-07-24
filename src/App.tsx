@@ -1,7 +1,6 @@
 import Page from "./components/Page";
 import RestaurantGrid from "./components/RestaurantGrid";
 import Section from "./components/Section";
-import { Toaster } from "react-hot-toast";
 import DeleteModal from "./components/DeleteModal";
 import usePlaces from "./hooks/usePlaces";
 import ErrorAlert from "./components/ErrorAlert";
