@@ -11,6 +11,7 @@ import {
   saveLikedPlace,
 } from "./api/bookmark";
 import toast, { Toaster } from "react-hot-toast";
+import DeleteModal from "./components/DeleteModal";
 
 export default function App() {
   const [places, setPlaces] = useState<Place[]>([]);
@@ -141,33 +142,15 @@ export default function App() {
             </Section>
           </>
         )}
-        {isModalOpen && (
-          <div className="modal modal-open">
-            <div className="modal-box">
-              <h3 className="font-bold text-lg">정말 삭제하시겠습니까?</h3>
-              <p className="py-4">{placeToDelete?.title}</p>
-              <div className="modal-action">
-                <button
-                  type="button"
-                  className="btn btn-error"
-                  onClick={confirmDelete}
-                >
-                  삭제
-                </button>
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    setPlaceToDelete(null);
-                  }}
-                >
-                  취소
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <DeleteModal
+          isOpen={isModalOpen}
+          placeToDelete={placeToDelete}
+          onConfirm={confirmDelete}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setPlaceToDelete(null);
+          }}
+        />
       </Page>
     </>
   );
